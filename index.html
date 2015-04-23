@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8"/>
+	<title>YeNo</title>
+	
+	<link rel="stylesheet" href="css/layout.css" type="text/css" media="screen" />
+	<!--[if lt IE 9]>
+	<link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript"></script>
+        <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.4.2.min.js"></script>
+	<script type="text/javascript">	
+
+	//Login submit
+        $(document).ready(function (){
+ 
+            // Replace this line with the one on your Quickstart Guide Page
+            Parse.initialize("zn9ol4WcgqqcgAmSXwOrkUQCoeSNZkOaRLrNaddD", "2Jm7X3nqkrA1ws7Eh9M3tdteGSi5fHTzre3i1Ln9");
+            var currentUser = Parse.User.current();
+            if (currentUser) {
+                window.location = "admin.html";
+            }
+            $( "#lgnBtn" ).click(function() {
+//             Get data from the form and put them into variables            
+            var username = $( "#username" ).val();
+            var password = $( "#password" ).val();
+
+//             Call Parse Login function with those variables
+            Parse.User.logIn(username, password, {
+                // If the username and password matches
+                success: function(user) {
+                    window.location = "admin.html"
+                },
+                // If there is an error
+                error: function(user, error) {
+                    console.log(error);
+                }
+            });
+        });
+        });
+        
+ 
+            
+
+
+    </script>
+
+</head>
+
+
+<body>
+	
+	<section id="main" class="column login">
+		
+		<h4 class="alert_info">Please enter your username and password to log on.</h4>
+		
+		
+		<article class="module width_quarter1">
+                    <header><h3>Log In</h3></header>
+                            <div class="module_content">
+                                            <fieldset>
+                                                    <label>Username</label>
+                                                    <input type="text" id="username" name="username" class="login"></input>
+                                            </fieldset>
+                                            <fieldset>
+                                                    <label>Password</label>
+                                                    <input type="password" id="password" name="password" class="login"></input>
+                                            </fieldset><div class="clear"></div>
+                            </div>
+                    <footer>
+                            <div class="submit_link">
+                                    <input type="button" id="lgnBtn" value="Log In" class="alt_btn">
+                            </div>
+                    </footer>
+		</article><!-- end of post new article -->
+		<!--
+		<h4 class="alert_warning">A Warning Alert</h4>
+		
+		<h4 class="alert_error">An Error Message</h4>
+		
+		<h4 class="alert_success">A Success Message</h4>		
+		
+		<div class="spacer"></div>
+	</section>
+
+
+</body>
+
+</html>
