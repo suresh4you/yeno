@@ -6,6 +6,7 @@
         <title>YeNo Admin Panel</title>
 
         <link rel="stylesheet" href="css/layout.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
         <!--[if lt IE 9]>
         <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -15,6 +16,7 @@
         <script src="js/hideshow.js" type="text/javascript"></script>
         <script src="js/jquery.tablesorter.min.js" type="text/javascript"></script>
         <script type="text/javascript" src="js/jquery.equalHeight.js"></script>
+		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
         <script type="text/javascript">
             $(document).ready(function () {
                 Parse.initialize("zn9ol4WcgqqcgAmSXwOrkUQCoeSNZkOaRLrNaddD", "2Jm7X3nqkrA1ws7Eh9M3tdteGSi5fHTzre3i1Ln9");
@@ -57,10 +59,10 @@
                 }
                 $("#publishBtn").click(function () {
                     //Extend the native Parse.Object class.
-                    var question_tbl = Parse.Object.extend("question_tbl");
+                    var Question = Parse.Object.extend("Question");
 
                     //Instantiate an object of the ListItem class
-                    var question_tbl = new question_tbl();
+                    var Question = new Question();
 
                     var fileUploadControl = $("#photo")[0];
                     if (fileUploadControl.files.length > 0) {
@@ -72,17 +74,17 @@
                         //put this inside if {
                         parseFile.save().then(function () {
                             // The file has been saved to Parse.
-                            question_tbl.set("photo", parseFile);
-                            question_tbl.set("question", $("#question").val());
-                            question_tbl.set("description", $("#description").val());
-                            question_tbl.set("weblink", $("#weblink").val());
-                            question_tbl.set("categoryId", $("#category").val());
-                            question_tbl.set("isPrivate", ($("input:radio[name=access]:checked").val() === 'true'));
-                            question_tbl.set("postedBy", Parse.User.current().get('username'));
+                            Question.set("photo", parseFile);
+                            Question.set("description", $("#description").val());
+                            Question.set("question", $("#question").val());
+                            Question.set("weblink", $("#weblink").val());
+                            Question.set("categoryId", $("#category").val());
+                            Question.set("isPrivate", ($("input:radio[name=access]:checked").val() === 'true'));
+                            Question.set("postedBy", Parse.User.current().get('username'));
 
 
                             //We call the save method, and pass in success and failure callback functions.
-                            question_tbl.save(null, {
+                            Question.save(null, {
                                 success: function (item) {
                                     //Success Callback 
                                     console.log(item);
@@ -94,13 +96,67 @@
                             });
                         }, function (error) {
                             // The file either could not be read, or could not be saved to Parse.
-                            question_tbl.set("photo", null);
                             console.log(error);
                         });
                     }
 
 
                 });
+				
+				var dialog = $( "#category-form" ).dialog({
+				  autoOpen: false,
+				  height: 300,
+				  width: 400,
+				  modal: true,
+				  buttons: {
+					"Add": function(){
+						//Extend the native Parse.Object class.
+						var Category = Parse.Object.extend("Category");
+
+						//Instantiate an object of the ListItem class
+						var Category = new Category();
+
+						var fileUploadControl = $("#categoryicon")[0];
+						if (fileUploadControl.files.length > 0) {
+							var file = fileUploadControl.files[0];
+							var name = "category.png";
+
+							var parseFile = new Parse.File(name, file);
+
+							//put this inside if {
+							parseFile.save().then(function () {
+								// The file has been saved to Parse.
+								Category.set("icon", parseFile);
+								Category.set("name", $("#categoryname").val());
+
+								//We call the save method, and pass in success and failure callback functions.
+								Category.save(null, {
+									success: function (item) {
+										//Success Callback 
+										console.log(item);
+										$("#categoryicon").val('');
+										$("#categoryname").val('');
+										dialog.dialog( "close" );
+									},
+									error: function (item, error) {
+										//Failure Callback
+									}
+								});
+							}, function (error) {
+								// The file either could not be read, or could not be saved to Parse.
+								console.log(error);
+							});
+						}
+					},
+					Cancel: function() {
+					  dialog.dialog( "close" );
+					}
+				  }
+				});
+			 
+				$( "#open-category" ).button().on( "click", function() {
+				  dialog.dialog( "open" );
+				});
 
             });
         </script>
@@ -146,7 +202,7 @@
             <ul class="toggle">
                 <li class="icn_new_article"><a href="#">New Article</a></li>
                 <li class="icn_edit_article"><a href="#">Edit Articles</a></li>
-                <li class="icn_categories"><a href="#">Categories</a></li>
+                <li class="icn_categories"><a id="open-category" href="#">Categories</a></li>
                 <li class="icn_tags"><a href="#">Tags</a></li>
             </ul>
             <h3>Users</h3>
@@ -428,7 +484,16 @@
             </article><!-- end of styles article -->
             <div class="spacer"></div>
         </section>
-
+	<div id="category-form" title="Create new category">
+		<fieldset>
+			<label>Name</label>
+			<input type="text" id="categoryname" name="categoryname" class="login"></input>
+		</fieldset>
+		<fieldset>
+			<label>Icon (128 X 128)</label>
+			<input type="file" id="categoryicon" name="categoryicon" class="login"></input>
+		</fieldset>
+	</div>
 
     </body>
 
